@@ -261,7 +261,7 @@ function HighlightList({ title, items, type }) {
               {h.thumbnailUrl && (
                 <MDBox
                   component="img"
-                  src={h.thumbnailUrl}
+                  src={getImageUrl(h.thumbnailUrl)}
                   alt={h.name}
                   sx={{ width: 64, height: 64, objectFit: "cover", borderRadius: "8px" }}
                 />
