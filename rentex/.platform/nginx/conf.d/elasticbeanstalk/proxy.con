@@ -1,0 +1,37 @@
+server_names_hash_bucket_size 128;
+types_hash_max_size 2048;
+types_hash_bucket_size 128;
+server {
+    listen 80;
+    server_name rentex-prod.eba-v8hsmwb5.ap-northeast-2.elasticbeanstalk.com www.rentex-prod.eba-v8hsmwb5.ap-northeast-2.elasticbeanstalk.com;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    # 나머지 요청은 HTTPS로 리다이렉트
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+
+server {
+    listen 443 ssl;
+    server_name rentex-prod.eba-v8hsmwb5.ap-northeast-2.elasticbeanstalk.com www.rentex-prod.eba-v8hsmwb5.ap-northeast-2.elasticbeanstalk.com;
+
+    ssl_certificate /etc/letsencrypt/live/rentex-prod.eba-v8hsmwb5.ap-northeast-2.elasticbeanstalk.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/rentex-prod.eba-v8hsmwb5.ap-northeast-2.elasticbeanstalk.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
