@@ -32,6 +32,7 @@ import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatist
 
 // axios 인스턴스
 import api from "api/client";
+import { getImageUrl } from "utils/imageUrl";
 
 /* -------------------------------------------------------
    유틸

@@ -61,8 +61,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: Springboot-developer
-          environment_name: Springboot-developer-env
+          application_name: Rentex
+          environment_name: rentex-prod
           version_label: rentex-${{ steps.current-time.outputs.formattedTime }}
           region: ap-northeast-2
           deployment_package: source-bundle.zip
