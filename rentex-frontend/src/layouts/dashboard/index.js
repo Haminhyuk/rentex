@@ -13,6 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import PropTypes from "prop-types";
+import { getImageUrl } from "utils/imageUrl";
 
 import main1 from "assets/images/main1.png";
 import main2 from "assets/images/main2.png";
@@ -267,6 +268,7 @@ function HighlightList({ title, items, type }) {
                   sx={{ width: 64, height: 64, objectFit: "cover", borderRadius: "8px" }}
                 />
               )}
+
               <MDBox flex={1}>
                 <MDTypography variant="button" fontWeight="bold">
                   {h.name}

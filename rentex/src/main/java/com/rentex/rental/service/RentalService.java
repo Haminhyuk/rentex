@@ -107,13 +107,7 @@ public class RentalService {
 
         // 사용 불가 차단
         if (item.getStatus() == Item.ItemStatus.UNAVAILABLE) {
-            // 프론트에서 코드 분기하기 쉽도록 메시지를 명확히 유지
             throw new ItemUnavailableException("이 장비는 현재 사용 불가 상태입니다."); // ITEM_UNAVAILABLE
-        }
-
-        // 재고 차단 (0 또는 수량 미달)
-        if (item.getStockQuantity() <= 0 || item.getStockQuantity() < requestDto.quantity()) {
-            throw new ItemUnavailableException("재고가 부족합니다."); // OUT_OF_STOCK
         }
 
         // (선택) 수량 유효성
@@ -121,13 +115,18 @@ public class RentalService {
             throw new IllegalArgumentException("대여 수량이 올바르지 않습니다.");
         }
 
-        // 기존 중복(가용성) 차단
-        boolean isOverlapping = rentalRepository.existsByItemAndStatusIn(
+        // ✅ 현재 대여 중 수량 합산
+        int rentedQuantity = rentalRepository.sumRentedQuantityByItemAndStatuses(
                 item,
-                List.of(RentalStatus.REQUESTED, RentalStatus.APPROVED, RentalStatus.SHIPPED, RentalStatus.RECEIVED)
+                List.of(RentalStatus.REQUESTED, RentalStatus.APPROVED,
+                        RentalStatus.SHIPPED, RentalStatus.RECEIVED) // RETURN_REQUESTED 제외
         );
-        if (isOverlapping) {
-            throw new ItemUnavailableException("이미 대여 중이거나 승인 대기 중인 장비입니다.");
+
+        int availableStock = item.getStockQuantity() - rentedQuantity;
+
+        // ✅ 재고 차단
+        if (availableStock < requestDto.quantity()) {
+            throw new ItemUnavailableException("재고가 부족합니다."); // OUT_OF_STOCK
         }
 
         // 생성 및 이력 기록
@@ -149,6 +148,7 @@ public class RentalService {
 
         return rental;
     }
+
 
 
     // 결제 처리 메서드 (수정본)

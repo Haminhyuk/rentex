@@ -75,7 +75,7 @@ export default function InquiryDetail() {
       } else if (err.response?.status === 404) {
         setError("해당 문의글을 찾을 수 없습니다.");
       } else {
-        setError("문의글을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
+        setError("문의 작성자만 해당 문의를 조회할 수 있습니다.");
       }
     } finally {
       setLoading(false);

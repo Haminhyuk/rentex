@@ -47,7 +47,15 @@ jobs:
         working-directory: ./rentex
         run: echo "artifact=$(basename $(ls ./build/libs/*.jar | grep -v plain))" >> $GITHUB_ENV
 
-      # 7. AWS Elastic Beanstalk 배포
+      # 7. Source bundle 만들기 (JAR + .platform 포함)
+      - name: Build source bundle
+        run: |
+          mkdir -p deploy
+          cp rentex/build/libs/${{ env.artifact }} deploy/
+          cp -r rentex/.platform deploy/
+          cd deploy && zip -r ../source-bundle.zip .
+
+      # 8. AWS Elastic Beanstalk 배포
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v20
         with:
@@ -57,4 +65,4 @@ jobs:
           environment_name: rentex-prod
           version_label: rentex-${{ steps.current-time.outputs.formattedTime }}
           region: ap-northeast-2
-          deployment_package: rentex/build/libs/${{ env.artifact }}
+          deployment_package: source-bundle.zip

@@ -125,6 +125,16 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
     @Query("SELECT COUNT(r) FROM Rental r WHERE r.item.partner.id = :partnerId AND r.status = 'RECEIVED'")
     Long countActiveByPartnerId(@Param("partnerId") Long partnerId);
 
+    /** 특정 아이템이 진행 중인 상태에서 대여된 총 수량 */
+    @Query("""
+    SELECT COALESCE(SUM(r.quantity), 0)
+    FROM Rental r
+    WHERE r.item = :item
+      AND r.status IN :statuses
+""")
+    int sumRentedQuantityByItemAndStatuses(@Param("item") Item item,
+                                           @Param("statuses") List<RentalStatus> statuses);
+
     long count();
 
     @Query("SELECT new com.rentex.category.dto.SubCategoryRevenueDTO(" +
